@@ -341,4 +341,14 @@
         }
     </script>
 </body>
+  <script>
+  // Vos identifiants d'affiliation
+  const TAG_AMAZON = "eddyfr01-21";
+
+  // Fonction qui génère le lien Amazon rémunéré
+  function ouvrirAmazon(recherche) {
+    const url = `https://www.amazon.fr/s?k=${encodeURIComponent(recherche)}&tag=${TAG_AMAZON}`;
+    window.open(url, '_blank');
+  }
+</script>
 </html>
