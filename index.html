@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+ <meta name="google-site-verification" content="JK-WE2s8ux-cZinAzZ3bMYXqw70AHP7eOyHmbiMM140" />
+ <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuiChercheTrouve - Le comparateur universel & géolocalisé</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950 min-h-screen p-2 sm:p-6 text-slate-100 flex items-center justify-center">
+
+    <div class="w-full max-w-2xl bg-slate-900 rounded-3xl shadow-2xl border border-slate-800 overflow-hidden relative">
+        
+        <!-- En-tête Style Flash & Dynamique -->
+        <div class="relative p-6 sm:p-8 text-white overflow-hidden bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop');">
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-indigo-950/85 to-purple-950/80 backdrop-blur-[2px]"></div>
+
+            <div class="relative z-10 flex justify-between items-start">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-amber-400/20 backdrop-blur-md px-3.5 py-1 rounded-full border border-amber-400/40 text-amber-300 text-xs font-bold mb-3 shadow-lg shadow-amber-500/10">
+                        <i class="fa-solid fa-bolt text-amber-300 animate-pulse"></i>
+                        <span>Résultats Flash ⚡ — <span id="userLocationBadge">Position en cours...</span></span>
+                    </div>
+                    <h1 class="font-black text-2xl sm:text-3xl tracking-tight text-white flex items-center gap-2">
+                        QuiChercheTrouve
+                    </h1>
+                    <p class="text-xs sm:text-sm text-indigo-100 mt-1 font-medium">
+                        Trouvez le meilleur prix instantanément : Magasins locaux, UE ou Direct Usine Global.
+                    </p>
+                </div>
+                
+                <!-- Bouton Cadenas Admin Protégé par Code -->
+                <button onclick="demanderCodeAdmin()" class="bg-white/10 hover:bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/20 transition text-amber-300 shadow-lg" title="Accès Admin Sécurisé">
+                    <i class="fa-solid fa-lock text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Panneau Administrateur Protégé par Mot de Passe -->
+        <div id="adminPanel" class="bg-slate-950 p-4 sm:p-5 border-b border-amber-500/30 hidden space-y-4">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved"></i> Espace Admin Privé (Statistiques & Revenus)
+                </span>
+                <button onclick="fermerAdmin()" class="text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i> Masquer</button>
+            </div>
+
+            <!-- Statistiques de Visites / Passages -->
+            <div>
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-2"><i class="fa-solid fa-users mr-1"></i> Passages sur le site</span>
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Aujourd'hui</span>
+                        <span id="adminVisitsDay" class="text-base font-extrabold text-indigo-400">1</span>
+                    </div>
+                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Mois en cours</span>
+                        <span id="adminVisitsMonth" class="text-base font-extrabold text-indigo-400">1</span>
+                    </div>
+                    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Année</span>
+                        <span id="adminVisitsYear" class="text-base font-extrabold text-indigo-400">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cagnotte & Commissions -->
+            <div>
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-2"><i class="fa-solid fa-wallet mr-1"></i> Cagnotte d'Affiliation</span>
+                <div class="grid grid-cols-2 gap-3 text-center">
+                    <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Commissions Recherches (+0,05€/rech)</span>
+                        <span id="adminSearchGains" class="text-xl font-extrabold text-emerald-400">0.05 €</span>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-2xl border border-slate-800">
+                        <span class="text-[10px] text-slate-400 block font-medium">Commissions Clics & Ventes</span>
+                        <span id="adminSalesGains" class="text-xl font-extrabold text-amber-400">0.00 €</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barre de recherche -->
+        <div class="p-5 sm:p-6 bg-slate-900/80 border-b border-slate-800/80">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                    <input id="searchInput" type="text" placeholder="Ex: pneu voiture, polo, chaussures, gadget..." value="polo ralph lauren" class="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-2xl text-sm font-medium text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition shadow-inner">
+                </div>
+                <button onclick="lancerRecherche()" class="bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 font-black px-6 py-3 rounded-2xl text-sm shadow-lg shadow-amber-500/20 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt text-slate-950"></i>
+                    <span>Recherche Flash</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Zone des 3 Colonnes de Résultats -->
+        <div class="p-5 sm:p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Offres dénichées pour <span id="searchTermText" class="text-amber-400">"polo ralph lauren"</span></p>
+                <span class="text-[11px] bg-amber-400/10 border border-amber-400/20 text-amber-300 font-bold px-3 py-1 rounded-full"><i class="fa-solid fa-layer-group mr-1"></i>3 Niveaux</span>
+            </div>
+
+            <!-- Colonne 1 : Géolocalisé / Proximité & Amazon FR -->
+            <div class="p-4 rounded-2xl bg-slate-950 border border-emerald-500/40 hover:border-emerald-500 transition duration-300 relative group shadow-md shadow-emerald-950/20">
+                <div class="flex justify-between items-start gap-3">
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg uppercase tracking-wide">
+                            <i class="fa-solid fa-location-dot"></i> 1. Boutique Locale & Officiel
+                        </span>
+                        <h3 id="origTitle" class="font-bold text-white text-base pt-1">Polo Ralph Lauren Officiel</h3>
+                        <p id="origStore" class="text-xs text-emerald-300 font-medium">Boutique officielle / Amazon France</p>
+                        <div class="flex items-center gap-3 pt-2 text-xs text-slate-400">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-store text-emerald-400"></i> Stock local disponible</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-truck text-emerald-400"></i> Liv. 24h</span>
+                        </div>
+                    </div>
+                    <div class="text-right flex flex-col justify-between items-end h-full">
+                        <span id="origPrice" class="text-xl font-black text-white">110,00 €</span>
+                        <a id="origBtn" href="#" onclick="redirigerPartenaire('Amazon', 1.20)" class="mt-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-extrabold px-4 py-2 rounded-xl transition shadow-lg shadow-emerald-500/10">
+                            Voir à proximité
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne 2 : Alternative Européenne -->
+            <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-amber-500/50 transition duration-300 relative group">
+                <div class="flex justify-between items-start gap-3">
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-lg uppercase tracking-wide">
+                            <i class="fa-solid fa-tags"></i> 2. Alternative UE
+                        </span>
+                        <h3 id="altTitle" class="font-bold text-white text-base pt-1">Polo Coupe Tendance UE</h3>
+                        <p id="altStore" class="text-xs text-slate-400">Marques Européennes Partenaires</p>
+                    </div>
+                    <div class="text-right flex flex-col justify-between items-end h-full">
+                        <span id="altPrice" class="text-xl font-black text-amber-400">45,00 €</span>
+                        <a id="altBtn" href="#" onclick="redirigerPartenaire('Alternative UE', 1.40)" class="mt-4 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold px-4 py-2 rounded-xl transition shadow-lg shadow-amber-500/10">
+                            Voir le marchand
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonne 3 : Direct Usine (Temu, Hacoo, AliExpress, DHgate, Banggood, Joybuy, Doorzo, Yepexpress...) -->
+            <div class="p-4 rounded-2xl bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border-2 border-amber-400/80 hover:border-amber-400 transition duration-300 relative group shadow-xl shadow-indigo-950/50">
+                <div class="absolute -top-3 right-4 bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 text-[10px] font-black px-3 py-0.5 rounded-full uppercase tracking-wider shadow-md">
+                    ⚡ Prix Imbattable Usine
+                </div>
+                <div class="flex justify-between items-start gap-3">
+                    <div class="space-y-1">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold bg-indigo-500 text-white px-2.5 py-1 rounded-lg uppercase tracking-wide shadow-sm">
+                            <i class="fa-solid fa-industry"></i> 3. Direct Usine (Import)
+                        </span>
+                        <h3 id="importTitle" class="font-bold text-white text-base pt-1">Polo Modèle Usine Direct</h3>
+                        <p id="importStore" class="text-xs text-indigo-300 font-semibold">Plateformes Import : Shein, DHgate & Hacoo</p>
+                    </div>
+                    <div class="text-right flex flex-col justify-between items-end h-full">
+                        <span id="importPrice" class="text-2xl font-black text-indigo-300">11,50 €</span>
+                        <a id="importBtn" href="#" onclick="redirigerPartenaire('Shein / DHgate Usine', 1.75)" class="mt-4 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 text-slate-950 text-xs font-extrabold px-4 py-2.5 rounded-xl transition shadow-lg shadow-amber-500/20">
+                            Voir sur Shein
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-slate-950 p-4 border-t border-slate-800/80 text-center text-xs text-slate-500">
+            <p>© QuiChercheTrouve — Comparez d'Amazon & boutiques locales jusqu'à Shein, DHgate, Taobao, Temu, Banggood...</p>
+        </div>
+    </div>
+
+    <script>
+        let searchGains = 0.05;
+        let salesGains = 0.00;
+        const codeSecretdAdmin = "1234";
+
+        function initialiserCompteurs() {
+            let vDay = parseInt(localStorage.getItem('qct_v_day') || "12");
+            let vMonth = parseInt(localStorage.getItem('qct_v_month') || "148");
+            let vYear = parseInt(localStorage.getItem('qct_v_year') || "1250");
+
+            vDay++; vMonth++; vYear++;
+
+            localStorage.setItem('qct_v_day', vDay);
+            localStorage.setItem('qct_v_month', vMonth);
+            localStorage.setItem('qct_v_year', vYear);
+
+            document.getElementById('adminVisitsDay').innerText = vDay;
+            document.getElementById('adminVisitsMonth').innerText = vMonth;
+            document.getElementById('adminVisitsYear').innerText = vYear;
+        }
+
+        window.onload = function() {
+            initialiserCompteurs();
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById('userLocationBadge').innerText = "Magasins proches";
+                }, function(error) {
+                    document.getElementById('userLocationBadge').innerText = "France";
+                });
+            } else {
+                document.getElementById('userLocationBadge').innerText = "France";
+            }
+            lancerRecherche();
+        };
+
+        function demanderCodeAdmin() {
+            const panel = document.getElementById('adminPanel');
+            if (!panel.classList.contains('hidden')) {
+                panel.classList.add('hidden');
+                return;
+            }
+            const saisie = prompt("Entrez votre code d'accès administrateur :");
+            if (saisie === codeSecretdAdmin) {
+                panel.classList.remove('hidden');
+            } else if (saisie !== null) {
+                alert("Code d'accès incorrect !");
+            }
+        }
+
+        function fermerAdmin() {
+            document.getElementById('adminPanel').classList.add('hidden');
+        }
+
+        function lancerRecherche() {
+            const rawQuery = document.getElementById('searchInput').value || 'Produit';
+            const query = rawQuery.toLowerCase();
+            document.getElementById('searchTermText').innerText = '"' + rawQuery + '"';
+
+            if (query.includes('pneu') || query.includes('auto') || query.includes('outillage') || query.includes('bricolage') || query.includes('piece')) {
+                document.getElementById('origTitle').innerText = capitalize(rawQuery) + " (Garantie Officielle)";
+                document.getElementById('origStore').innerText = "Centre Auto / Stock local proche";
+                document.getElementById('origPrice').innerText = "129,90 €";
+
+                document.getElementById('altTitle').innerText = capitalize(rawQuery) + " (Alternative UE)";
+                document.getElementById('altStore').innerText = "Equipementier Européen";
+                document.getElementById('altPrice').innerText = "79,90 €";
+
+                document.getElementById('importTitle').innerText = capitalize(rawQuery) + " (Direct Usine Geekbuying)";
+                document.getElementById('importStore').innerText = "Grossistes Import : Geekbuying & Made-In-China";
+                document.getElementById('importPrice').innerText = "38,00 €";
+                document.getElementById('importBtn').innerText = "Voir sur Geekbuying";
+                document.getElementById('importBtn').onclick = () => redirigerPartenaire('https://www.geekbuying.com/search?keyword=' + encodeURIComponent(rawQuery), 1.80);
+
+            } else if (query.includes('polo') || query.includes('veste') || query.includes('sac') || query.includes('mode') || query.includes('chaussure') || query.includes('robe') || query.includes('luxe')) {
+                document.getElementById('origTitle').innerText = capitalize(rawQuery) + " Officiel";
+                document.getElementById('origStore').innerText = "Boutique en ville & Amazon Mode";
+                document.getElementById('origPrice').innerText = "110,00 €";
+
+                document.getElementById('altTitle').innerText = capitalize(rawQuery) + " Tendance UE";
+                document.getElementById('altStore').innerText = "Marchand Européen Partenaire";
+                document.getElementById('altPrice').innerText = "45,00 €";
+
+                document.getElementById('importTitle').innerText = capitalize(rawQuery) + " (Shein / DHgate Direct)";
+                document.getElementById('importStore').innerText = "Plateformes Mode : Shein, DHgate, DeWu & YesStyle";
+                document.getElementById('importPrice').innerText = "11,50 €";
+                document.getElementById('importBtn').innerText = "Voir sur Shein";
+                document.getElementById('importBtn').onclick = () => redirigerPartenaire('https://fr.shein.com/pdsearch/' + encodeURIComponent(rawQuery), 1.90);
+
+            } else if (query.includes('high tech') || query.includes('telephone') || query.includes('montre') || query.includes('gadget') || query.includes('electronique')) {
+                document.getElementById('origTitle').innerText = capitalize(rawQuery) + " - Neuf Officiel";
+                document.getElementById('origStore').innerText = "Magasin Officiel & Amazon France";
+                document.getElementById('origPrice').innerText = "199,00 €";
+
+                document.getElementById('altTitle').innerText = capitalize(rawQuery) + " - Alternative Qualité";
+                document.getElementById('altStore').innerText = "Boutique Européenne Partenaire";
+                document.getElementById('altPrice').innerText = "89,90 €";
+
+                document.getElementById('importTitle').innerText = capitalize(rawQuery) + " (Direct Usine JD.com)";
+                document.getElementById('importStore').innerText = "Réseaux Tech : JD.com, Sunsky & DealExtreme";
+                document.getElementById('importPrice').innerText = "28,90 €";
+                document.getElementById('importBtn').innerText = "Voir sur JD.com";
+                document.getElementById('importBtn').onclick = () => redirigerPartenaire('https://global.jd.com', 1.75);
+
+            } else {
+                document.getElementById('origTitle').innerText = capitalize(rawQuery) + " - Neuf Officiel";
+                document.getElementById('origStore').innerText = "Magasin Officiel & Amazon France";
+                document.getElementById('origPrice').innerText = "89,00 €";
+
+                document.getElementById('altTitle').innerText = capitalize(rawQuery) + " - Alternative Qualité";
+                document.getElementById('altStore').innerText = "Boutique Européenne Partenaire";
+                document.getElementById('altPrice').innerText = "39,90 €";
+
+                document.getElementById('importTitle').innerText = capitalize(rawQuery) + " - Grossistes Direct Usine";
+                document.getElementById('importStore').innerText = "Réseau Import : Taobao, 1688, Temu, LightInTheBox";
+                document.getElementById('importPrice').innerText = "8,90 €";
+                document.getElementById('importBtn').innerText = "Voir sur Taobao";
+                document.getElementById('importBtn').onclick = () => redirigerPartenaire('https://world.taobao.com/search/search.htm?q=' + encodeURIComponent(rawQuery), 1.70);
+            }
+
+            document.getElementById('origBtn').onclick = () => redirigerPartenaire('https://www.amazon.fr/s?k=' + encodeURIComponent(rawQuery), 1.20);
+            document.getElementById('altBtn').onclick = () => redirigerPartenaire('https://www.google.com/search?q=' + encodeURIComponent(rawQuery), 1.40);
+
+            searchGains += 0.05;
+            document.getElementById('adminSearchGains').innerText = searchGains.toFixed(2) + ' €';
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function redirigerPartenaire(urlDestination, commissionEstimee) {
+            salesGains += commissionEstimee;
+            document.getElementById('adminSalesGains').innerText = salesGains.toFixed(2) + ' €';
+            window.open(urlDestination, '_blank');
+        }
+    </script>
+</body>
+</html>
