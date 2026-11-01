@@ -363,5 +363,18 @@ function ouvrirAliExpress(recherche) {
     window.open(urlAliExpress, '_blank');
   }
 }
+    // Fonction pour ouvrir Temu avec votre code d'affiliation
+function ouvrirTemu(recherche) {
+  const codeTemu = "alq752723";
+  const urlTemu = `https://www.temu.com/search_result.html?search_key=${encodeURIComponent(recherche)}`;
+  
+  window.open(`${urlTemu}&refer_share_id=${codeTemu}`, '_blank');
+}
+
+// Fonction pour ouvrir Hacoo
+function ouvrirHacoo(recherche) {
+  const urlHacoo = `https://hacoo.app/search?q=${encodeURIComponent(recherche)}`;
+  window.open(urlHacoo, '_blank');
+}
 </script>
 </html>
