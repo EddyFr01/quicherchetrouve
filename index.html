@@ -351,5 +351,17 @@
     const url = `https://www.amazon.fr/s?k=${encodeURIComponent(recherche)}&tag=${TAG_AMAZON}`;
     window.open(url, '_blank');
   }
+    // Fonction pour ouvrir AliExpress (prête pour votre lien d'affiliation)
+function ouvrirAliExpress(recherche) {
+  const baseDeeplink = "VOTRE_DEEPLINK_ADMITAD"; 
+  const urlAliExpress = `https://fr.aliexpress.com/w/wholesale-${encodeURIComponent(recherche)}.html`;
+  
+  if (baseDeeplink !== "VOTRE_DEEPLINK_ADMITAD") {
+    const urlAffiliee = `${baseDeeplink}?ulp=${encodeURIComponent(urlAliExpress)}`;
+    window.open(urlAffiliee, '_blank');
+  } else {
+    window.open(urlAliExpress, '_blank');
+  }
+}
 </script>
 </html>
