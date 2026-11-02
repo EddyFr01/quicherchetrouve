@@ -60,12 +60,12 @@
         </button>
       </div>
 
-      <!-- 2. ALTERNATIVE UE (ALIEXPRESS) -->
+      <!-- 2. ALTERNATIVE UE (ALIEXPRESS - ADMITAD) -->
       <div class="bg-slate-800/60 border border-slate-700/50 rounded-xl p-4 flex items-center justify-between">
         <div>
           <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-1 rounded">📦 2. ALTERNATIVE UE</span>
           <h3 class="text-white font-semibold mt-1" id="titreAliExpress">Produit - Alternative Qualité</h3>
-          <p class="text-slate-400 text-xs">Boutique Européenne Partenaire</p>
+          <p class="text-slate-400 text-xs">AliExpress Offres Européennes</p>
         </div>
         <button 
           onclick="ouvrirAliExpress(document.getElementById('searchInput').value)" 
@@ -200,7 +200,9 @@
     function ouvrirAliExpress(recherche) {
       enregistrerClic('ali', 0.15);
       const q = recherche.trim() || 'offres';
-      window.open(`https://www.google.com/search?q=${encodeURIComponent('AliExpress ' + q)}`, '_blank');
+      const urlBaseAdmitad = "https://rzekl.com/g/1e8d11449443edbe1fcb16525dc3e8/?ulp=";
+      const urlAliExpressSearch = encodeURIComponent(`https://fr.aliexpress.com/wholesale?SearchText=${q}`);
+      window.open(`${urlBaseAdmitad}${urlAliExpressSearch}`, '_blank');
     }
 
     function ouvrirDirectUsine(recherche) {
